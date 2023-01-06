@@ -13,9 +13,7 @@
  */
 package net.revelc.code.formatter;
 
-/**
- * The Enum LineEnding.
- */
+/** The Enum LineEnding. */
 public enum LineEnding {
 
     /** The auto. */
@@ -100,5 +98,4 @@ public enum LineEnding {
         }
         return UNKNOWN;
     }
-
 }
