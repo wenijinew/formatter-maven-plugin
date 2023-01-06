@@ -30,6 +30,7 @@ import org.eclipse.jface.text.BadLocationException;
 
 /**
  * This mojo is very similar to Formatter mojo, but it is focused on CI servers.
+ *
  * <p>
  * If the code ain't formatted as expected this mojo will fail the build
  */
@@ -78,9 +79,9 @@ public class ValidateMojo extends FormatterMojo {
         super.doFormatFile(file, rc, hashCache, basedirPath, true);
 
         if (rc.successCount != 0) {
-            String errorMessage = String.format(
-                    "File '%s' has not been previously formatted. Please format file (for example by invoking `%s`) and commit before running validation!",
-                    file, formatCommand());
+            String errorMessage = String
+                    .format("File '%s' has not been previously formatted. Please format file (for example by"
+                            + " invoking `%s`) and commit before running validation!", file, formatCommand());
             throw new MojoFailureException(errorMessage);
         }
         if (rc.failCount != 0) {
@@ -96,5 +97,4 @@ public class ValidateMojo extends FormatterMojo {
         String specifyModule = isMultiModule ? String.format("-f %s", moduleDir) : "";
         return String.format("mvn %s %s", specifyModule, mojoInvocation).replace("  ", " ");
     }
-
 }
