@@ -20,9 +20,7 @@ import java.util.Map;
 import org.apache.commons.digester3.Digester;
 import org.xml.sax.SAXException;
 
-/**
- * This class reads a config file for Eclipse code formatter.
- */
+/** This class reads a config file for Eclipse code formatter. */
 public class ConfigReader {
 
     /**
@@ -58,5 +56,4 @@ public class ConfigReader {
 
         return list.get(0);
     }
-
 }

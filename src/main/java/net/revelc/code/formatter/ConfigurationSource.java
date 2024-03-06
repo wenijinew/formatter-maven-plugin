@@ -18,9 +18,7 @@ import java.nio.charset.Charset;
 
 import org.apache.maven.plugin.logging.Log;
 
-/**
- * The Interface ConfigurationSource.
- */
+/** The Interface ConfigurationSource. */
 public interface ConfigurationSource {
 
     /**
@@ -64,5 +62,4 @@ public interface ConfigurationSource {
      * @return the encoding
      */
     Charset getEncoding();
-
 }

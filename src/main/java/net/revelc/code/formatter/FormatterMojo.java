@@ -73,6 +73,7 @@ import net.revelc.code.formatter.xml.XMLFormatter;
 
 /**
  * A Maven plugin mojo to format Java source code using the Eclipse code formatter.
+ *
  * <p>
  * Mojo parameters allow customizing formatting by specifying the config XML file, line endings, compiler version, and
  * source code locations. Reformatting source files is avoided using an sha512 hash of the content, comparing to the
@@ -96,56 +97,48 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /** The Constant FORMATTER_SKIPPED with preceding space. */
     private static final String FORMATTING_IS_SKIPPED = " formatting is skipped";
 
-    /**
-     * ResourceManager for retrieving the configFile resource.
-     */
+    /** ResourceManager for retrieving the configFile resource. */
     @Component(role = ResourceManager.class)
     private ResourceManager resourceManager;
 
-    /**
-     * The Maven project for retrieving the resources.
-     */
+    /** The Maven project for retrieving the resources. */
     @Component
     private MavenProject project;
 
-    /**
-     * Project's source directory as specified in the POM.
-     */
+    /** Project's source directory as specified in the POM. */
     @Parameter(defaultValue = "${project.build.sourceDirectory}", property = "sourceDirectory", required = true)
     private File sourceDirectory;
 
-    /**
-     * Project's test source directory as specified in the POM.
-     */
+    /** Project's test source directory as specified in the POM. */
     @Parameter(defaultValue = "${project.build.testSourceDirectory}", property = "testSourceDirectory", required = true)
     private File testSourceDirectory;
 
-    /**
-     * Project's target directory as specified in the POM.
-     */
+    /** Project's target directory as specified in the POM. */
     @Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
     private File targetDirectory;
 
-    /**
-     * Project's base directory as specified in the POM.
-     */
+    /** Project's base directory as specified in the POM. */
     @Parameter(defaultValue = "${project.basedir}", property = "baseDirectory", readonly = true, required = true)
     private File basedir;
 
     /**
      * Projects cache directory.
+     *
      * <p>
      * This file is a hash cache of the files in the project source. It can be preserved in source code such that it
      * ensures builds are always fast by not unnecessarily writing files constantly. It can also be added to gitignore
      * in case startup is not necessary. It further can be redirected to another location.
+     *
      * <p>
      * When stored in the repository, the cache if run on cross platforms will display the files multiple times due to
      * line ending differences on the platform.
+     *
      * <p>
      * The cache itself has been part of formatter plugin for a long time but was hidden in target directory and did not
      * survive clean phase when it should. This is not intended to be clean in that way as one would want as close to a
      * no-op as possible when files are already all formatted and/or have not been otherwise touched. This is used based
      * off the files in the project so it is as much part of the source as any other file is.
+     *
      * <p>
      * The cache can become invalid for any number of reasons that this plugin can't reasonably detect automatically. If
      * you rely on the cache and make any changes to the project that could conceivably make the cache invalid, or if
@@ -183,21 +176,15 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     @Parameter(property = "formatter.excludes")
     private String[] excludes;
 
-    /**
-     * Java compiler source version.
-     */
+    /** Java compiler source version. */
     @Parameter(defaultValue = "1.8", property = "maven.compiler.source", required = true)
     private String compilerSource;
 
-    /**
-     * Java compiler compliance version.
-     */
+    /** Java compiler compliance version. */
     @Parameter(defaultValue = "1.8", property = "maven.compiler.source", required = true)
     private String compilerCompliance;
 
-    /**
-     * Java compiler target version.
-     */
+    /** Java compiler target version. */
     @Parameter(defaultValue = "1.8", property = "maven.compiler.target", required = true)
     private String compilerTargetPlatform;
 
@@ -212,12 +199,13 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
 
     /**
      * Sets the line-ending of files after formatting. Valid values are:
+     *
      * <ul>
-     * <li><b>"AUTO"</b> - Use line endings of current system</li>
-     * <li><b>"KEEP"</b> - Preserve line endings of files, default to AUTO if ambiguous</li>
-     * <li><b>"LF"</b> - Use Unix and Mac style line endings</li>
-     * <li><b>"CRLF"</b> - Use DOS and Windows style line endings</li>
-     * <li><b>"CR"</b> - Use early Mac style line endings</li>
+     * <li><b>"AUTO"</b> - Use line endings of current system
+     * <li><b>"KEEP"</b> - Preserve line endings of files, default to AUTO if ambiguous
+     * <li><b>"LF"</b> - Use Unix and Mac style line endings
+     * <li><b>"CRLF"</b> - Use DOS and Windows style line endings
+     * <li><b>"CR"</b> - Use early Mac style line endings
      * </ul>
      *
      * @since 0.2.0
@@ -237,63 +225,43 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     @Parameter(defaultValue = "formatter-maven-plugin/eclipse/javascript.xml", property = "configjsfile", required = true)
     private String configJsFile;
 
-    /**
-     * File or classpath location of a properties file to use in html formatting.
-     */
+    /** File or classpath location of a properties file to use in html formatting. */
     @Parameter(defaultValue = "formatter-maven-plugin/jsoup/html.properties", property = "confightmlfile", required = true)
     private String configHtmlFile;
 
-    /**
-     * File or classpath location of a properties file to use in xml formatting.
-     */
+    /** File or classpath location of a properties file to use in xml formatting. */
     @Parameter(defaultValue = "formatter-maven-plugin/eclipse/xml.properties", property = "configxmlfile", required = true)
     private String configXmlFile;
 
-    /**
-     * File or classpath location of a properties file to use in json formatting.
-     */
+    /** File or classpath location of a properties file to use in json formatting. */
     @Parameter(defaultValue = "formatter-maven-plugin/jackson/json.properties", property = "configjsonfile", required = true)
     private String configJsonFile;
 
-    /**
-     * File or classpath location of a properties file to use in css formatting.
-     */
+    /** File or classpath location of a properties file to use in css formatting. */
     @Parameter(defaultValue = "formatter-maven-plugin/ph-css/css.properties", property = "configcssfile", required = true)
     private String configCssFile;
 
-    /**
-     * Whether the java formatting is skipped.
-     */
+    /** Whether the java formatting is skipped. */
     @Parameter(defaultValue = "false", property = "formatter.java.skip")
     private boolean skipJavaFormatting;
 
-    /**
-     * Whether the javascript formatting is skipped.
-     */
+    /** Whether the javascript formatting is skipped. */
     @Parameter(defaultValue = "false", property = "formatter.js.skip")
     private boolean skipJsFormatting;
 
-    /**
-     * Whether the html formatting is skipped.
-     */
+    /** Whether the html formatting is skipped. */
     @Parameter(defaultValue = "false", property = "formatter.html.skip")
     private boolean skipHtmlFormatting;
 
-    /**
-     * Whether the xml formatting is skipped.
-     */
+    /** Whether the xml formatting is skipped. */
     @Parameter(defaultValue = "false", property = "formatter.xml.skip")
     private boolean skipXmlFormatting;
 
-    /**
-     * Whether the json formatting is skipped.
-     */
+    /** Whether the json formatting is skipped. */
     @Parameter(defaultValue = "false", property = "formatter.json.skip")
     private boolean skipJsonFormatting;
 
-    /**
-     * Whether the css formatting is skipped.
-     */
+    /** Whether the css formatting is skipped. */
     @Parameter(defaultValue = "false", property = "formatter.css.skip")
     private boolean skipCssFormatting;
 
@@ -305,19 +273,19 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     @Parameter(defaultValue = "false", alias = "skip", property = "formatter.skip")
     private boolean skipFormatting;
 
-    /**
-     * Use eclipse defaults when set to true for java and javascript.
-     */
+    /** Use eclipse defaults when set to true for java and javascript. */
     @Parameter(defaultValue = "false", property = "formatter.useEclipseDefaults")
     private boolean useEclipseDefaults;
 
     /**
      * A java regular expression pattern that can be used to exclude some portions of the java code from being
      * reformatted.
+     *
      * <p>
      * This can be useful when using DSL that embeds some kind of semantic hierarchy, where users can use various
      * indentation level to increase the readability of the code. Those semantics are ignored by the formatter, so this
      * regex pattern can be used to match certain portions of the code so that they will not be reformatted.
+     *
      * <p>
      * An example is the Apache Camel java DSL which can be used in the following way: <code><pre>
      * 	from("seda:a").routeId("a")
@@ -328,6 +296,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
      * 			.end()
      * 			.log("End of routing");
      * </pre></code>
+     *
      * <p>
      * In the above example, the except can be skipped by the formatter by defining the following property in the
      * formatter xml configuration: <code><pre>
@@ -341,6 +310,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
 
     /**
      * When set to true, remove trailing whitespace on all lines after the formatter has finished.
+     *
      * <p>
      * Default to 'true' since 2.18.0
      *
@@ -352,10 +322,10 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * When set to true, the resources for the project are included in formatting. This includes both the main and test
      * resources.
+     *
      * <p>
      * The included/excluded patterns for this plugin are honored as well as the included/excluded patterns from the
      * resource itself.
-     * </p>
      *
      * @since 2.22.0
      */
@@ -467,7 +437,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
                 }
             }
 
-            // Only store the cache if it changed during processing to avoid java properties timestamp writing for
+            // Only store the cache if it changed during processing to avoid java properties timestamp
+            // writing for
             // those that want to save the cache
             if (this.hashCacheWritten) {
                 this.storeFileHashCache(hashCache);
@@ -533,7 +504,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         final var ds = new DirectoryScanner();
         ds.setBasedir(newBasedir);
 
-        // Check includes. We want to process both what the user includes from this plugin and what the resource itself
+        // Check includes. We want to process both what the user includes from this plugin and what the
+        // resource itself
         // includes.
         final List<String> included = new ArrayList<>();
         if (this.includes != null && this.includes.length > 0) {
@@ -546,7 +518,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         }
         ds.setIncludes(included.toArray(new String[0]));
 
-        // Check excludes. We want to process both what the user exclude from this plugin and what the resource itself
+        // Check excludes. We want to process both what the user exclude from this plugin and what the
+        // resource itself
         // excludes.
         final List<String> excluded = new ArrayList<>();
         if (this.excludes != null && this.excludes.length > 0) {
@@ -711,7 +684,6 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             final String basedirPath, final boolean dryRun)
             throws IOException, BadLocationException, MojoFailureException, MojoExecutionException {
         final var log = this.getLog();
-        log.debug("Processing file: " + file);
         final var originalCode = this.readFileAsString(file);
         final var originalHash = this.sha512hash(originalCode);
 
@@ -720,7 +692,6 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         final var cachedHash = hashCache.getProperty(path);
         if (cachedHash != null && cachedHash.equals(originalHash)) {
             rc.skippedCount++;
-            log.debug("File is already formatted.");
             return;
         }
 
@@ -1062,9 +1033,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         return skippedTypes;
     }
 
-    /**
-     * The Class ResultCollector.
-     */
+    /** The Class ResultCollector. */
     static class ResultCollector {
 
         /** The success count. */
